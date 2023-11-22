@@ -1,0 +1,36 @@
+﻿@model financeiro.Models.Conta
+
+@{
+    ViewBag.Title = "Operação de Saque";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@ViewBag.Title</h2>
+
+@using (Html.BeginForm("Saque", "Conta", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+
+    @Html.HiddenFor(model => model.Id)
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Balance, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.DisplayFor(model => model.Balance)
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.Label("Valor do Saque", new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.TextBox("valor", null, new { @class = "form-control", type = "number", step = "0.01", min = "0.01" })
+            @Html.ValidationMessage("valor", "Valor inválido", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="Realizar Saque" class="btn btn-primary" />
+        </div>
+    </div>
+}
