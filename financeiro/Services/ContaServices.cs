@@ -1,5 +1,6 @@
 ﻿using financeiro.Infra;
 using financeiro.Models;
+using financeiro.Models.Filters;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -16,13 +17,31 @@ namespace financeiro.Services
 
 
 
-        public async Task<List<Conta>> Index()
+        public async Task<ContaFilter> List(int pageNumber = 1, int pageSize = 10)
         {
             using (var db = new Contexto())
             {
+                int skipAmount = (pageNumber - 1) * pageSize;
 
-                return await db.Conta.ToListAsync();
+
+                var totalRecords = await db.Conta.CountAsync();
+
+                var retorno = await db.Conta
+                    .OrderBy(x => x.Id)
+                    .Skip(skipAmount)
+                    .Take(pageSize)                   
+                    .ToListAsync();
+
+                var viewModel = new ContaFilter
+                {
+                    Conta = retorno,
+                    CurrentPage = pageNumber,
+                    PageSize = pageSize,
+                    TotalRecords = totalRecords
+                };
+                return viewModel;
             }
+           
         }
 
 

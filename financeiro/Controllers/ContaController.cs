@@ -11,6 +11,7 @@ using financeiro.Infra;
 using financeiro.Models;
 using System.Web.Services.Description;
 using financeiro.Services;
+using Newtonsoft.Json;
 
 namespace financeiro.Controllers
 {
@@ -19,9 +20,18 @@ namespace financeiro.Controllers
        ContaServices contaServices =new ContaServices();
 
         
-        public async Task<ActionResult> Index()
+        public async Task<ActionResult> Listagem(int pageNumber = 1, int pageSize = 2)
         {
-            return View(await contaServices.Index() );
+            return View(await contaServices.List( pageNumber,  pageSize) );
+        }
+
+          public async Task<JsonResult> ListarContas()
+        {
+            var result = await contaServices.List();
+
+            var _result=JsonConvert.SerializeObject(result);
+            
+            return Json(_result,JsonRequestBehavior.AllowGet)  ;
         }
 
         
@@ -54,7 +64,7 @@ namespace financeiro.Controllers
             {
                
                await  contaServices.Create(conta);
-                return RedirectToAction("Index");
+                return RedirectToAction("Listagem");
             }
 
             return View(conta);
@@ -84,7 +94,7 @@ namespace financeiro.Controllers
             {
                
                 await contaServices.Edit(conta);
-                return RedirectToAction("Index");
+                return RedirectToAction("Listagem");
             }
             return View(conta);
         }
@@ -110,7 +120,7 @@ namespace financeiro.Controllers
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
             await contaServices.DeleteConfirmed(id);
-            return RedirectToAction("Index");
+            return RedirectToAction("Listagem");
         }
 
         [HttpPost, ActionName("Saque")]

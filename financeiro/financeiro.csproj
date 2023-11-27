@@ -141,7 +141,6 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\ContaController.cs" />
-    <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -152,6 +151,7 @@
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Conta.cs" />
+    <Compile Include="Models\Filters\ContaFilter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\ContaServices.cs" />
   </ItemGroup>
@@ -203,14 +203,11 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Views\Home\About.cshtml" />
-    <Content Include="Views\Home\Contact.cshtml" />
-    <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Conta\Create.cshtml" />
     <Content Include="Views\Conta\Delete.cshtml" />
     <Content Include="Views\Conta\Details.cshtml" />
     <Content Include="Views\Conta\Edit.cshtml" />
-    <Content Include="Views\Conta\Index.cshtml" />
+    <Content Include="Views\Conta\Listagem.cshtml" />
     <Content Include="Views\Conta\Saque.cshtml" />
     <Content Include="Views\Conta\OperacaoSaque.cshtml" />
     <Content Include="Views\Conta\OperacaoDeposito.cshtml" />
