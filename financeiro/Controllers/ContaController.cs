@@ -22,7 +22,7 @@ namespace financeiro.Controllers
         
         public async Task<ActionResult> Listagem(int pageNumber = 1, int pageSize = 2)
         {
-            return View(await contaServices.List( pageNumber,  pageSize) );
+            return View(await contaServices.ListDapper( pageNumber,  pageSize) );
         }
 
           public async Task<JsonResult> ListarContas()

@@ -1,9 +1,12 @@
-﻿using financeiro.Infra;
+﻿using Dapper;
+using financeiro.Infra;
 using financeiro.Models;
 using financeiro.Models.Filters;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data.Entity;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -15,7 +18,43 @@ namespace financeiro.Services
     public class ContaServices
     {
 
+        public async Task<ContaFilter> ListDapper(int pageNumber = 1, int pageSize = 10)
+        {
 
+            string connectionString = ConfigurationManager.ConnectionStrings["Contexto"].ConnectionString;
+
+            using (var connection = new SqlConnection(connectionString))
+            {
+                int skipAmount = (pageNumber - 1) * pageSize;
+
+                string countQuery = "SELECT COUNT(*) FROM dbo.Contas";
+                string mainQuery = @"
+                                    SELECT *
+                                    FROM dbo.Contas
+                                    ORDER BY Id
+                                    OFFSET @Skip ROWS
+                                    FETCH NEXT @PageSize ROWS ONLY";
+
+
+                await connection.OpenAsync();
+
+
+                var totalRecords = await connection.ExecuteScalarAsync<int>(countQuery);
+
+
+                var retorno = await connection.QueryAsync<Conta>(mainQuery, new { Skip = skipAmount, PageSize = pageSize });
+
+                var viewModel = new ContaFilter
+                {
+                    Conta = retorno.ToList(),
+                    CurrentPage = pageNumber,
+                    PageSize = pageSize,
+                    TotalRecords = totalRecords
+                };
+
+                return viewModel;
+            }
+        }
 
         public async Task<ContaFilter> List(int pageNumber = 1, int pageSize = 10)
         {
@@ -29,7 +68,7 @@ namespace financeiro.Services
                 var retorno = await db.Conta
                     .OrderBy(x => x.Id)
                     .Skip(skipAmount)
-                    .Take(pageSize)                   
+                    .Take(pageSize)
                     .ToListAsync();
 
                 var viewModel = new ContaFilter
@@ -41,7 +80,7 @@ namespace financeiro.Services
                 };
                 return viewModel;
             }
-           
+
         }
 
 
@@ -97,7 +136,7 @@ namespace financeiro.Services
         {
             using (var db = new Contexto())
             {
-               var conta = await db.Conta.FindAsync(id);
+                var conta = await db.Conta.FindAsync(id);
                 if (conta != null)
                 {
                     conta.Deposito(valor);
@@ -107,12 +146,12 @@ namespace financeiro.Services
                 return null;
 
             }
-        } 
+        }
         public async Task<Conta> Saque(int id, double valor)
         {
             using (var db = new Contexto())
             {
-               var conta = await db.Conta.FindAsync(id);
+                var conta = await db.Conta.FindAsync(id);
                 if (conta != null)
                 {
                     conta.Saque(valor);
